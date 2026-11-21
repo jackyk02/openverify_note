@@ -192,8 +192,11 @@
   <li>The number of repeated evaluations</li>
   <li>The decomposition of evaluation criteria</li>
 </ol>
-<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table>
+<details>
+  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table></div>
+</details>
 <figure><img src="assets/fig2.png" alt="Verification accuracy scaling with compute" loading="lazy"></figure>
 
 <h4>(b) Data for training / fine-tuning verifiers</h4>
@@ -201,8 +204,11 @@
   <li>With contrastive language models (CLMs), we find that the test InfoNCE loss (verification loss) <em>L</em> follows a <strong>power law</strong> in training compute <em>C</em>, dataset size <em>D</em>, and model parameters <em>N</em>.</li>
 </ul>
 <figure><img src="assets/clm-scaling.png" alt="CLM scaling laws" loading="lazy"></figure>
-<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-green">↓ Down</td><td><span class="c-green">↑ Up</span> on domain-specific data; <span class="c-red">↓ Down</span> on generalization</td><td class="c-green">↑ Up</td></tr></table>
+<details>
+  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-green">↓ Down</td><td><span class="c-green">↑ Up</span> on domain-specific data; <span class="c-red">↓ Down</span> on generalization</td><td class="c-green">↑ Up</td></tr></table></div>
+</details>
 
 <h4>(c) Model capability</h4>
 <ul>
@@ -210,8 +216,11 @@
   <li>In twelve months, verification accuracy rose from <strong>69% (Haiku) to 92% (Fable 5.2)</strong>.</li>
 </ul>
 <figure><img src="assets/fig3.png" alt="Verification accuracy by model generation" loading="lazy"></figure>
-<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table>
+<details>
+  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table></div>
+</details>
 
 <!-- 4 -->
 <h2 id="cases">4. Industry Adoptions and Case Studies</h2>
