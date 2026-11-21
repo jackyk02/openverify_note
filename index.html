@@ -4,335 +4,347 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OpenVerify: An Open-Source Community on Verification for Agents</title>
-<meta name="description" content="OpenVerify: why verification, not generation, is the binding constraint on deploying AI agents, with case studies across industry.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✅</text></svg>">
 <style>
   :root {
-    --bg: #fbfaf7; --fg: #1d2330; --muted: #5d6676; --line: #e4e1d9;
-    --accent: #0b7a64; --accent-soft: #e6f2ee; --warn: #c97a1a; --card: #ffffff;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #14171c; --fg: #e6e8ec; --muted: #9aa3b2; --line: #2a2f38;
-      --accent: #3fc1a0; --accent-soft: #1b2d29; --warn: #e8a24a; --card: #1b1f26; }
-    figure img { background: #fff; }
+    --fg: #37352f; --muted: rgba(55,53,47,.65); --faint: rgba(55,53,47,.45);
+    --line: rgba(55,53,47,.09); --hover: rgba(55,53,47,.06);
+    --gray-bg: #f1f1ef; --blue-bg: #e7f3f8; --yellow-bg: #fbf3db; --green-bg: #edf3ec;
+    --red: #d44c47; --green: #448361; --blue: #337ea9; --orange: #d9730d;
+    color-scheme: light;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-    font: 18px/1.7 "Source Serif 4", Georgia, serif; }
-  h1, h2, h3, h4, nav, .eyebrow, table, .stat, .tag, .toc { font-family: Inter, system-ui, sans-serif; }
-  a { color: var(--accent); }
-  .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+  body { margin: 0; background: #fff; color: var(--fg);
+    font: 16px/1.5 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased; }
 
-  header.hero { padding: 88px 0 56px; border-bottom: 1px solid var(--line); }
-  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; color: var(--accent); font-weight: 600; }
-  h1 { font-size: clamp(34px, 5vw, 50px); line-height: 1.12; margin: 14px 0 20px; letter-spacing: -.02em; }
-  .lede { font-size: 21px; color: var(--muted); margin: 0; }
+  /* Top bar */
+  .topbar { position: sticky; top: 0; z-index: 10; height: 45px; background: #fff; display: flex; align-items: center;
+    padding: 0 12px; font-size: 14px; color: var(--fg); }
+  .topbar span { padding: 2px 6px; border-radius: 4px; }
+  .topbar .sep { color: var(--faint); padding: 0 2px; }
 
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 40px 0 0; }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
-  .stat b { display: block; font-size: 26px; color: var(--accent); letter-spacing: -.02em; }
-  .stat span { font-size: 13px; color: var(--muted); line-height: 1.4; display: block; }
+  .page { max-width: 708px; margin: 0 auto; padding: 0 24px 30vh; }
 
-  nav.toc { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  nav.toc .wrap { display: flex; gap: 22px; overflow-x: auto; padding-top: 12px; padding-bottom: 12px; font-size: 14px; white-space: nowrap; }
-  nav.toc a { color: var(--muted); text-decoration: none; }
-  nav.toc a:hover { color: var(--accent); }
+  /* Page header */
+  .icon { font-size: 78px; line-height: 1.1; margin-top: 80px; }
+  h1.title { font-size: 40px; line-height: 1.2; font-weight: 700; margin: 8px 0 12px; }
+  .props { margin: 0 0 8px; font-size: 14px; }
+  .props .row { display: flex; padding: 4px 0; }
+  .props .k { width: 160px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+  .props .v { flex: 1; }
+  .pill { display: inline-block; padding: 0 6px; border-radius: 3px; font-size: 14px; line-height: 20px; margin-right: 4px; }
+  .pill.blue { background: #d3e5ef; } .pill.green { background: #dbeddb; } .pill.yellow { background: #fdecc8; }
+  .pill.purple { background: #e8deee; } .pill.gray { background: #e3e2e0; } .pill.orange { background: #fadec9; }
+  .pill.red { background: #ffe2dd; } .pill.pink { background: #f5e0e9; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 14px 0; }
 
-  section { padding: 64px 0 8px; }
-  h2 { font-size: 30px; letter-spacing: -.015em; margin: 0 0 18px; }
-  h2 .num { color: var(--accent); margin-right: 10px; }
-  h3 { font-size: 21px; margin: 44px 0 10px; }
-  h4 { font-size: 16px; margin: 32px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-  ul, ol { padding-left: 1.3em; }
-  li { margin: 4px 0; }
+  /* Blocks */
+  h2 { font-size: 1.875em; font-weight: 600; line-height: 1.3; margin: 2em 0 4px; }
+  h3 { font-size: 1.5em; font-weight: 600; line-height: 1.3; margin: 1.4em 0 2px; }
+  h4 { font-size: 1.25em; font-weight: 600; line-height: 1.3; margin: 1em 0 2px; }
+  p { margin: 2px 0; padding: 3px 2px; }
+  ul, ol { margin: 2px 0; padding-left: 1.7em; }
+  li { padding: 3px 0; }
+  li::marker { color: var(--fg); }
+  a { color: inherit; text-decoration: underline; text-decoration-color: rgba(55,53,47,.4); text-underline-offset: 2px; }
+  a:hover { text-decoration-color: var(--fg); }
+  strong { font-weight: 600; }
+  mark { background: var(--yellow-bg); color: inherit; padding: 0 2px; border-radius: 2px; }
+  .c-green { color: var(--green); } .c-red { color: var(--red); } .c-orange { color: var(--orange); }
 
-  figure { margin: 28px 0; }
-  figure img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; }
-  figure.narrow img { max-width: 440px; margin: 0 auto; }
-  figcaption { font-size: 15px; color: var(--muted); margin-top: 8px; text-align: center; font-style: italic; }
+  figure { margin: 8px 0; padding: 3px 0; }
+  figure img { max-width: 100%; height: auto; display: block; border-radius: 4px; margin: 0 auto; }
+  figure.narrow img { max-width: 420px; }
+  figcaption { font-size: 14px; color: var(--muted); padding: 6px 2px 0; }
 
-  .callout { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 24px 0; }
-  .callout.q { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+  .callout { display: flex; gap: 10px; padding: 16px 16px 16px 12px; border-radius: 4px; background: var(--gray-bg); margin: 6px 0; }
+  .callout .ci { font-size: 21px; line-height: 1.2; flex: none; width: 24px; text-align: center; }
+  .callout > div:last-child { flex: 1; min-width: 0; }
+  .callout p { padding: 0; }
+  .callout.blue { background: var(--blue-bg); } .callout.yellow { background: var(--yellow-bg); } .callout.green { background: var(--green-bg); }
 
-  .positions { counter-reset: p; list-style: none; padding: 0; }
-  .positions li { counter-increment: p; position: relative; padding: 14px 18px 14px 62px; margin: 12px 0;
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
-  .positions li::before { content: counter(p); position: absolute; left: 18px; top: 13px; width: 30px; height: 30px;
-    border-radius: 50%; background: var(--accent); color: #fff; font: 600 15px/30px Inter, sans-serif; text-align: center; }
+  blockquote { margin: 6px 0; padding: 3px 14px; border-left: 3px solid currentColor; font-size: 1.2em; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 18px 0; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { font-weight: 600; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
-  .up { color: var(--accent); font-weight: 600; } .down { color: var(--warn); font-weight: 600; }
+  .toc { margin: 6px 0; }
+  .toc a { display: block; padding: 4px 2px; text-decoration: none; color: var(--muted); font-size: 14px;
+    border-bottom: 1px solid transparent; border-radius: 3px; }
+  .toc a:hover { background: var(--hover); }
+  .toc a.l2 { padding-left: 26px; }
 
-  .case { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 44px; }
-  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft);
-    padding: 3px 10px; border-radius: 99px; margin-bottom: 4px; }
-  .case h3 { margin-top: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 8px 0; }
+  th, td { border: 1px solid #e9e9e7; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #f7f6f3; font-weight: 500; color: var(--muted); }
 
-  .ships { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 20px 0; }
-  .ships div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; font-size: 16px; line-height: 1.55; }
-  .ships b { font-family: Inter, sans-serif; display: block; margin-bottom: 6px; font-size: 16px; }
+  .todo { list-style: none; padding-left: 2px; }
+  .todo li { display: flex; gap: 8px; align-items: flex-start; }
+  .todo li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 3px; border: 1.5px solid var(--fg); border-radius: 2px; }
 
-  .todo { list-style: none; padding: 0; }
-  .todo li::before { content: "☐"; color: var(--accent); margin-right: 10px; }
+  details { margin: 2px 0; }
+  details > summary { cursor: pointer; padding: 3px 2px; list-style: none; font-weight: 600; }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::before { content: "▶"; display: inline-block; font-size: 11px; width: 20px; color: var(--fg); transition: transform .15s; }
+  details[open] > summary::before { transform: rotate(90deg); }
+  details > .body { padding-left: 22px; }
 
-  footer { margin-top: 80px; padding: 32px 0 60px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; font-family: Inter, sans-serif; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 6px 0; }
+  @media (max-width: 640px) { .cols { grid-template-columns: 1fr; } .props .k { width: 120px; } }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap">
-    <div class="eyebrow">Proposal · November 2026</div>
-    <h1>OpenVerify: An Open-Source Community on Verification for Agents</h1>
-    <p class="lede">LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper.</p>
-    <div class="stats">
-      <div class="stat"><b>74%</b><span>of production agent deployments still rely on human evaluation</span></div>
-      <div class="stat"><b>69% → 92%</b><span>verifier accuracy gain from newer models in 12 months</span></div>
-      <div class="stat"><b>7</b><span>industry &amp; academic adopters across 7 domains</span></div>
-    </div>
-  </div>
-</header>
+<div class="topbar"><span>📁 Research</span><span class="sep">/</span><span>✅ OpenVerify</span></div>
 
-<nav class="toc"><div class="wrap">
-  <a href="#motivation">Motivation</a>
-  <a href="#position">Position</a>
-  <a href="#evidence">Evidence</a>
-  <a href="#cases">Case Studies</a>
-  <a href="#interviews">Interviews</a>
-  <a href="#ships">What Ships</a>
-  <a href="#compute">Compute</a>
-  <a href="#next">Next Steps</a>
-</div></nav>
+<main class="page">
 
-<main class="wrap">
+<div class="icon">✅</div>
+<h1 class="title">OpenVerify: An Open-Source Community on Verification for Agents</h1>
 
-<section id="motivation">
-  <h2><span class="num">01</span>Motivation</h2>
+<div class="props">
+  <div class="row"><div class="k">📅 Date</div><div class="v">November 21, 2026</div></div>
+  <div class="row"><div class="k">🏷️ Type</div><div class="v"><span class="pill blue">Advisor meeting</span><span class="pill purple">Proposal</span></div></div>
+  <div class="row"><div class="k">🔵 Status</div><div class="v"><span class="pill yellow">In progress</span></div></div>
+  <div class="row"><div class="k">🏢 Partners</div><div class="v"><span class="pill green">NVIDIA</span><span class="pill gray">Thinking Machines</span><span class="pill orange">Databricks</span><span class="pill blue">Google</span><span class="pill purple">Lambda</span><span class="pill red">Genentech</span><span class="pill pink">Stanford Law</span></div></div>
+</div>
+<hr>
 
-  <h3>Industry adoption so far</h3>
-  <ul>
-    <li>I have been giving talks about LLM-as-a-Verifier across industry.</li>
-    <li>Adopters include <strong>NVIDIA, Thinking Machines, Databricks, Google, Lambda, Genentech, and Stanford Law School</strong>.</li>
-    <li><strong>Proposal:</strong> build on these adoptions to grow a broader community around verification for agents, and release a position paper to anchor it.</li>
-  </ul>
-  <figure><img src="assets/adoption.png" alt="Logos of organizations adopting LLM-as-a-Verifier" loading="lazy"></figure>
+<div class="callout blue"><div class="ci">💡</div><div>
+  <p><strong>TL;DR</strong>: LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose launching <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper.</p>
+</div></div>
 
-  <h3>Why now: “Riemann Hypothesis solved by Anthropic?”</h3>
-  <figure class="narrow"><img src="assets/x-riemann.png" alt="Post on X about the Riemann Hypothesis" loading="lazy"><figcaption>Today’s news on X.</figcaption></figure>
-  <ul>
-    <li>Breakthroughs like this implicitly <em>“assume the existence of a reliable verifier.”</em></li>
-    <li>The news sparked a broader discussion on X about <strong>verifiable vs. non-verifiable tasks</strong> and <strong>jagged intelligence</strong>: LLMs are extremely capable on verifiable tasks such as math and coding, but fail badly in many non-verifiable domains.</li>
-  </ul>
-  <figure><img src="assets/fig1.png" alt="Jagged intelligence illustration" loading="lazy"><figcaption>Jagged intelligence.</figcaption></figure>
+<div class="cols">
+  <div class="callout"><div class="ci">👤</div><div><p><strong>74%</strong> of production agent deployments still rely on human evaluation</p></div></div>
+  <div class="callout"><div class="ci">📈</div><div><p><strong>69% → 92%</strong> verifier accuracy from newer models in 12 months</p></div></div>
+  <div class="callout"><div class="ci">🤝</div><div><p><strong>7</strong> industry &amp; academic adopters across 7 domains</p></div></div>
+</div>
 
-  <p>Examples of outputs that are hard to verify:</p>
-  <ul>
-    <li>A medication order</li>
-    <li>A contract</li>
-    <li>A lane change by an autonomous car</li>
-    <li>A grasp by a robot</li>
-  </ul>
-  <div class="callout"><strong>We currently have no verifier that returns a trusted score for outputs like these.</strong></div>
-</section>
+<nav class="toc">
+  <a href="#motivation">1. Motivation</a>
+  <a href="#position">2. Position Paper Outline</a>
+  <a href="#evidence">3. Evidence for Each Position</a>
+  <a href="#cases">4. Industry Adoptions and Case Studies</a>
+  <a href="#interviews">5. Collaborator Interviews</a>
+  <a href="#ships">6. What Ships with OpenVerify</a>
+  <a href="#compute">7. Verification Compute and Chip Design</a>
+  <a href="#next">8. Next Steps</a>
+</nav>
 
-<section id="position">
-  <h2><span class="num">02</span>The Position</h2>
-  <p>We plan to write a position paper for OpenVerify, modeled after the <em>Barbarians at the Gate</em> paper.</p>
-  <ol class="positions">
-    <li><strong>Verification, not generation, is now the binding constraint on deploying AI agents.</strong></li>
-    <li><strong>Verification is a capability that scales with compute, data, and model capability.</strong></li>
-    <li><strong>Verification should be built and measured as a first-class component, separate from the agent.</strong></li>
-    <li><strong>Case studies</strong> show how verification scaling applies across domains.</li>
-  </ol>
-</section>
+<!-- 1 -->
+<h2 id="motivation">1. Motivation</h2>
 
-<section id="evidence">
-  <h2><span class="num">03</span>Evidence</h2>
+<h3>Industry adoption so far</h3>
+<ul>
+  <li>Shulu and I have been giving talks about LLM-as-a-Verifier across industry.</li>
+  <li>Adopters include <strong>NVIDIA, Thinking Machines, Databricks, Google, Lambda, Genentech, and Stanford Law School</strong>.</li>
+  <li><strong>Proposal:</strong> build on these adoptions to grow a broader community around verification for agents, and release a position paper to anchor it.</li>
+</ul>
+<figure><img src="assets/adoption.png" alt="Logos of organizations adopting LLM-as-a-Verifier" loading="lazy"></figure>
 
-  <h3>Position 1: Verification is the binding constraint</h3>
-  <ul>
-    <li>Today, <strong>74% of production deployments rely on human evaluation</strong> (Melissa &amp; Marquita, <em>Measuring Agents in Production</em>, 2025).</li>
-    <li><strong>Plan:</strong> re-run the survey with Marquita and Melissa, report the updated number, and see whether it has held steady or shrunk.</li>
-  </ul>
+<h3>Why now: “Riemann Hypothesis solved by Anthropic?”</h3>
+<p>Today’s news on X:</p>
+<figure class="narrow"><img src="assets/x-riemann.png" alt="Post on X about the Riemann Hypothesis" loading="lazy"></figure>
+<ul>
+  <li>Breakthroughs like this implicitly <em>“assume the existence of a reliable verifier.”</em></li>
+  <li>The news sparked a broader discussion on X about <strong>verifiable vs. non-verifiable tasks</strong> and <strong>jagged intelligence</strong>:
+    <ul><li>LLMs are extremely capable on verifiable tasks such as math and coding, but fail badly in many non-verifiable domains.</li></ul>
+  </li>
+</ul>
+<figure><img src="assets/fig1.png" alt="Jagged intelligence illustration" loading="lazy"><figcaption>Jagged intelligence.</figcaption></figure>
 
-  <h3>Position 2: Verification scales along three axes</h3>
+<p>Examples of outputs that are hard to verify:</p>
+<ul>
+  <li>A medication order</li>
+  <li>A contract</li>
+  <li>A lane change by an autonomous car</li>
+  <li>A grasp by a robot</li>
+</ul>
+<div class="callout yellow"><div class="ci">⚠️</div><div><p><strong>We currently have no verifier that returns a trusted score for outputs like these.</strong></p></div></div>
 
-  <h4>(a) Compute</h4>
-  <p>In our LLM-as-a-Verifier paper, verification accuracy improves consistently as we scale (1) the granularity of score tokens, (2) the number of repeated evaluations, and (3) the decomposition of evaluation criteria.</p>
-  <figure><img src="assets/fig2.png" alt="Verification accuracy scaling with compute" loading="lazy"></figure>
-  <table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-    <tr><td class="down">↑ Up</td><td class="up">↑ Up</td><td class="down">↓ Down</td></tr></table>
+<!-- 2 -->
+<h2 id="position">2. Position Paper Outline</h2>
+<p>We plan to write a position paper for OpenVerify, modeled after the <em>Barbarians at the Gate</em> paper.</p>
+<p><strong>The position:</strong></p>
+<ol>
+  <li><strong>Verification, not generation, is now the binding constraint on deploying AI agents.</strong></li>
+  <li><strong>Verification is a capability that scales with compute, data, and model capability.</strong></li>
+  <li><strong>Verification should be built and measured as a first-class component, separate from the agent.</strong></li>
+  <li><strong>Case studies</strong> showing how verification scaling applies across domains.</li>
+</ol>
 
-  <h4>(b) Data for training / fine-tuning verifiers</h4>
-  <p>With contrastive language models (CLMs), the test InfoNCE loss (verification loss) <em>L</em> follows a <strong>power law</strong> in training compute <em>C</em>, dataset size <em>D</em>, and model parameters <em>N</em>.</p>
-  <figure><img src="assets/clm-scaling.png" alt="CLM scaling laws" loading="lazy"></figure>
-  <table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-    <tr><td class="up">↓ Down</td><td><span class="up">↑ Up</span> on domain-specific data; <span class="down">↓ Down</span> on generalization</td><td class="up">↑ Up</td></tr></table>
+<!-- 3 -->
+<h2 id="evidence">3. Evidence for Each Position</h2>
 
-  <h4>(c) Model capability</h4>
-  <p><strong>Newer models are better verifiers out of the box.</strong> In twelve months, verification accuracy rose from <strong>69% (Haiku) to 92% (Fable 5.2)</strong>.</p>
-  <figure><img src="assets/fig3.png" alt="Verification accuracy by model generation" loading="lazy"></figure>
-  <table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-    <tr><td class="down">↑ Up</td><td class="up">↑ Up</td><td class="down">↓ Down</td></tr></table>
-</section>
+<h3>Position 1: Verification is the binding constraint</h3>
+<ul>
+  <li>Today, <strong>74% of production deployments rely on human evaluation.</strong>
+    <ul><li>Source: Melissa &amp; Marquita, <em>Measuring Agents in Production</em> (2025).</li></ul>
+  </li>
+  <li><strong>Plan:</strong> re-run the survey with Marquita and Melissa, report the updated number, and see whether it has held steady or shrunk.</li>
+</ul>
 
-<section id="cases">
-  <h2><span class="num">04</span>Industry Adoptions &amp; Case Studies</h2>
+<h3>Position 2: Verification scales along three axes</h3>
 
-  <div class="case">
-    <span class="tag">Agentic benchmarks</span>
-    <h3>NVIDIA — Nemotron 3.5 model release</h3>
-    <figure><img src="assets/fig4.png" alt="Nemotron 3.5 release" loading="lazy"></figure>
-    <p>Scaling <strong>self-verification</strong> with <strong>Nemotron 3.5 Super</strong> improves accuracy across agentic benchmarks:</p>
-    <table>
-      <tr><th>Benchmark</th><th>Before</th><th>After</th><th>Gain</th></tr>
-      <tr><td>Terminal-Bench 2.1</td><td>63%</td><td>72%</td><td class="up">+9</td></tr>
-      <tr><td>DeepSWE</td><td>25%</td><td>35%</td><td class="up">+10</td></tr>
-      <tr><td>BrowseComp</td><td>71.5%</td><td>79.8%</td><td class="up">+8.3</td></tr>
-    </table>
-  </div>
+<h4>(a) Compute</h4>
+<p>In our LLM-as-a-Verifier paper, verification accuracy improves consistently as we scale:</p>
+<ol>
+  <li>The granularity of score tokens</li>
+  <li>The number of repeated evaluations</li>
+  <li>The decomposition of evaluation criteria</li>
+</ol>
+<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table>
+<figure><img src="assets/fig2.png" alt="Verification accuracy scaling with compute" loading="lazy"></figure>
 
-  <div class="case">
-    <span class="tag">RL for non-verifiable tasks</span>
-    <h3>Thinking Machines — 3D modeling</h3>
+<h4>(b) Data for training / fine-tuning verifiers</h4>
+<ul>
+  <li>With contrastive language models (CLMs), we find that the test InfoNCE loss (verification loss) <em>L</em> follows a <strong>power law</strong> in training compute <em>C</em>, dataset size <em>D</em>, and model parameters <em>N</em>.</li>
+</ul>
+<figure><img src="assets/clm-scaling.png" alt="CLM scaling laws" loading="lazy"></figure>
+<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-green">↓ Down</td><td><span class="c-green">↑ Up</span> on domain-specific data; <span class="c-red">↓ Down</span> on generalization</td><td class="c-green">↑ Up</td></tr></table>
+
+<h4>(c) Model capability</h4>
+<ul>
+  <li><strong>Newer models are better verifiers out of the box.</strong></li>
+  <li>In twelve months, verification accuracy rose from <strong>69% (Haiku) to 92% (Fable 5.2)</strong>.</li>
+</ul>
+<figure><img src="assets/fig3.png" alt="Verification accuracy by model generation" loading="lazy"></figure>
+<table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table>
+
+<!-- 4 -->
+<h2 id="cases">4. Industry Adoptions and Case Studies</h2>
+
+<h3>NVIDIA — Nemotron 3.5 model release</h3>
+<figure><img src="assets/fig4.png" alt="Nemotron 3.5 release" loading="lazy"></figure>
+<p>Scaling <strong>self-verification</strong> with <strong>Nemotron 3.5 Super</strong> improves accuracy across agentic benchmarks:</p>
+<table>
+  <tr><th>Benchmark</th><th>Before</th><th>After</th><th>Gain</th></tr>
+  <tr><td>Terminal-Bench 2.1</td><td>63%</td><td>72%</td><td class="c-green"><strong>+9</strong></td></tr>
+  <tr><td>DeepSWE</td><td>25%</td><td>35%</td><td class="c-green"><strong>+10</strong></td></tr>
+  <tr><td>BrowseComp</td><td>71.5%</td><td>79.8%</td><td class="c-green"><strong>+8.3</strong></td></tr>
+</table>
+
+<h3>Thinking Machines — RL for non-verifiable tasks</h3>
+<ul>
+  <li><a href="https://jackyk02.github.io/thinking_blog/#3d-gallery">Blog post</a></li>
+  <li>Standard LLM judges tend to assign identical scores on aesthetic quality, so they provide little signal.</li>
+  <li>LLM-as-a-Verifier improves the quality of 3D modeling by <strong>32%</strong>.</li>
+</ul>
+<figure><img src="assets/fig5.png" alt="3D modeling outputs" loading="lazy"></figure>
+<ul><li><strong>Tie rate grows during RL training:</strong> as the model produces increasingly competitive outputs, they become harder to distinguish with discrete scores.</li></ul>
+<figure><img src="assets/fig6.png" alt="Tie rate over RL training" loading="lazy"></figure>
+<ul><li>Using LLM-as-a-Verifier as the RL reward signal (instead of standard judges) yields an <strong>8% higher held-out score</strong>.</li></ul>
+<figure><img src="assets/fig7.png" alt="Held-out score comparison" loading="lazy"></figure>
+
+<h3>Databricks — Document processing</h3>
+<ul><li>On <strong>OfficeQA V2</strong>, LLM-as-a-Verifier improves pass@1 from <strong>36% → 49%</strong>, recovering <strong>70% of the oracle headroom</strong>.</li></ul>
+<figure><img src="assets/fig8.png" alt="OfficeQA results" loading="lazy"></figure>
+<figure><img src="assets/fig9.png" alt="OfficeQA oracle headroom" loading="lazy"></figure>
+
+<h3>Stanford Law School — Legal agents</h3>
+<ul>
+  <li>Built a verifier-native harness with the <a href="https://reglab.stanford.edu/">Regulation, Evaluation, and Governance Lab (RegLab)</a> at Stanford Law School.</li>
+  <li>On the <strong>Harvey Lab legal benchmark</strong>: <strong>+15% pass rate</strong> over the Artificial Analysis harness, across models.</li>
+</ul>
+<figure><img src="assets/fig10.png" alt="Legal benchmark results" loading="lazy"></figure>
+
+<h3>Lambda &amp; NVIDIA — Autonomous driving</h3>
+<ul>
+  <li>With scaled self-verification, NVIDIA’s <strong>Alpamayo Edge (2B)</strong> outperforms the <strong>Alpamayo Super (34B)</strong> AV model.</li>
+  <li>Closed-loop simulation on a Mercedes-Benz:
     <ul>
-      <li><a href="https://jackyk02.github.io/thinking_blog/#3d-gallery">Blog post</a></li>
-      <li>Standard LLM judges tend to assign identical scores on aesthetic quality, so they provide little signal.</li>
-      <li>LLM-as-a-Verifier improves the quality of 3D modeling by <strong>32%</strong>.</li>
+      <li>Success rate: <strong>64.3% → 81.3%</strong></li>
+      <li>Collision rate: <strong>11% → 4.5%</strong></li>
     </ul>
-    <figure><img src="assets/fig5.png" alt="3D modeling outputs" loading="lazy"></figure>
-    <p><strong>Tie rate grows during RL training:</strong> as the model produces increasingly competitive outputs, they become harder to distinguish with discrete scores.</p>
-    <figure><img src="assets/fig6.png" alt="Tie rate over RL training" loading="lazy"></figure>
-    <p>Using LLM-as-a-Verifier as the RL reward signal (instead of standard judges) yields an <strong>8% higher held-out score</strong>.</p>
-    <figure><img src="assets/fig7.png" alt="Held-out score comparison" loading="lazy"></figure>
+  </li>
+</ul>
+<figure><img src="assets/fig11.png" alt="Alpamayo closed-loop results" loading="lazy"></figure>
+<details open>
+  <summary>Edge vs. Edge + Verifier</summary>
+  <div class="body">
+    <p>Alpamayo Edge alone crashes into the car in front of it.</p>
+    <figure><img src="assets/alpamayo-edge.gif" alt="Alpamayo Edge vs Edge + Verifier simulation" loading="lazy"></figure>
   </div>
+</details>
 
-  <div class="case">
-    <span class="tag">Document processing</span>
-    <h3>Databricks — OfficeQA V2</h3>
-    <p>LLM-as-a-Verifier improves pass@1 from <strong>36% → 49%</strong>, recovering <strong>70% of the oracle headroom</strong>.</p>
-    <figure><img src="assets/fig8.png" alt="OfficeQA results" loading="lazy"></figure>
-    <figure><img src="assets/fig9.png" alt="OfficeQA oracle headroom" loading="lazy"></figure>
-  </div>
+<h3>Google Research — Spatial reasoning</h3>
+<ul><li>Task: answer questions grounded in Google Maps, spatial, and geographic data.</li></ul>
+<figure><img src="assets/fig12.png" alt="Spatial reasoning task example" loading="lazy"></figure>
+<ul><li>On <strong>GeoExpertQueries</strong> (built on Google Maps), LLM-as-a-Verifier raises the success rate of <strong>Gemini 3.8 Flash from 63% → 76%</strong> (+13).</li></ul>
+<figure><img src="assets/fig13.png" alt="GeoExpertQueries results" loading="lazy"></figure>
 
-  <div class="case">
-    <span class="tag">Legal agents</span>
-    <h3>Stanford Law School — Verifier-native legal harness</h3>
-    <ul>
-      <li>Built a verifier-native harness with the <a href="https://reglab.stanford.edu/">Regulation, Evaluation, and Governance Lab (RegLab)</a> at Stanford Law School.</li>
-      <li>On the <strong>Harvey Lab legal benchmark</strong>: <strong>+15% pass rate</strong> over the Artificial Analysis harness, across models.</li>
-    </ul>
-    <figure><img src="assets/fig10.png" alt="Legal benchmark results" loading="lazy"></figure>
-  </div>
+<h3>RoboVerify — New paper with Azalia, Marco &amp; Yejin</h3>
+<ul>
+  <li>Similar in spirit to our earlier RoboMonkey work, but now verifying action proposals from LLMs directly.</li>
+  <li>Scaling self-verification with <strong>DeepSeek-V4.1-Flash</strong> improves success from <strong>25.0% → 50.5%</strong>, close to <strong>GPT-6 Astra (55.3%)</strong> at <strong>10.3× lower cost</strong>.</li>
+</ul>
+<figure><img src="assets/fig14.png" alt="RoboVerify results" loading="lazy"></figure>
 
-  <div class="case">
-    <span class="tag">Autonomous driving</span>
-    <h3>Lambda &amp; NVIDIA — Alpamayo</h3>
-    <ul>
-      <li>With scaled self-verification, NVIDIA’s <strong>Alpamayo Edge (2B)</strong> outperforms the <strong>Alpamayo Super (34B)</strong> AV model.</li>
-      <li>Closed-loop simulation on a Mercedes-Benz: success rate <strong>64.3% → 81.3%</strong>; collision rate <strong>11% → 4.5%</strong>.</li>
-    </ul>
-    <figure><img src="assets/fig11.png" alt="Alpamayo closed-loop results" loading="lazy"></figure>
-    <figure><img src="assets/alpamayo-edge.gif" alt="Alpamayo Edge vs Edge + Verifier simulation" loading="lazy"><figcaption>Edge vs. Edge + Verifier: Alpamayo Edge alone crashes into the car in front of it.</figcaption></figure>
-  </div>
+<h3>Genentech — Drug discovery</h3>
+<ul>
+  <li>Genentech’s agentic drug discovery AI team reached out to us.</li>
+  <li>Validation in this domain is very expensive: animal studies, human experiments, and the FDA process.</li>
+  <li>They already use verifier-style rubrics in many of their AI-for-science projects.</li>
+  <li>They are willing to share internal data so we can validate LLM-as-a-Verifier later.</li>
+  <li>They are also interested in how <strong>robotics + verification</strong> could accelerate wet-lab experiments.</li>
+</ul>
+<figure><img src="assets/fig15.png" alt="Drug discovery pipeline" loading="lazy"></figure>
+<figure><img src="assets/fig16.png" alt="Drug discovery verification" loading="lazy"></figure>
 
-  <div class="case">
-    <span class="tag">Spatial reasoning</span>
-    <h3>Google Research — GeoExpertQueries</h3>
-    <p>Task: answer questions grounded in Google Maps, spatial, and geographic data.</p>
-    <figure><img src="assets/fig12.png" alt="Spatial reasoning task example" loading="lazy"></figure>
-    <p>On <strong>GeoExpertQueries</strong> (built on Google Maps), LLM-as-a-Verifier raises the success rate of <strong>Gemini 3.8 Flash from 63% → 76%</strong> (+13).</p>
-    <figure><img src="assets/fig13.png" alt="GeoExpertQueries results" loading="lazy"></figure>
-  </div>
+<!-- 5 -->
+<h2 id="interviews">5. Collaborator Interviews</h2>
+<p><strong>One structured interview per collaborator.</strong></p>
 
-  <div class="case">
-    <span class="tag">Robotics</span>
-    <h3>RoboVerify — New paper with Azalia, Marco &amp; Yejin</h3>
-    <ul>
-      <li>Similar in spirit to our earlier RoboMonkey work, but now verifying action proposals from LLMs directly.</li>
-      <li>Scaling self-verification with <strong>DeepSeek-V4.1-Flash</strong> improves success from <strong>25.0% → 50.5%</strong>, close to <strong>GPT-6 Astra (55.3%)</strong> at <strong>10.3× lower cost</strong>.</li>
-    </ul>
-    <figure><img src="assets/fig14.png" alt="RoboVerify results" loading="lazy"></figure>
-  </div>
+<h3>Part A — Adoption experience</h3>
+<ol>
+  <li>What did you use to check agent outputs before?</li>
+  <li>What changed after adopting the verifier, and how do you know?</li>
+  <li>What broke?</li>
+  <li>What would make you stop using it?</li>
+  <li>What did it cost to set up?</li>
+</ol>
 
-  <div class="case">
-    <span class="tag">Drug discovery</span>
-    <h3>Genentech — Agentic drug discovery</h3>
-    <ul>
-      <li>Genentech’s agentic drug discovery AI team reached out to us.</li>
-      <li>Validation in this domain is very expensive: animal studies, human experiments, and the FDA process.</li>
-      <li>They already use verifier-style rubrics in many of their AI-for-science projects.</li>
-      <li>They are willing to share internal data so we can validate LLM-as-a-Verifier later.</li>
-      <li>They are also interested in how <strong>robotics + verification</strong> could accelerate wet-lab experiments.</li>
-    </ul>
-    <figure><img src="assets/fig15.png" alt="Drug discovery pipeline" loading="lazy"></figure>
-    <figure><img src="assets/fig16.png" alt="Drug discovery verification" loading="lazy"></figure>
-  </div>
-</section>
+<h3>Part B — Cost / accuracy / latency trade-offs</h3>
+<figure class="narrow"><img src="assets/fig17.png" alt="Accuracy, cost, latency triangle: where do you sit?" loading="lazy"></figure>
+<table>
+  <tr><th style="width:120px">Dimension</th><th>Question</th></tr>
+  <tr><td><span class="pill green">Cost</span></td><td>What do you spend on verification per task today, and what is the most you would pay?</td></tr>
+  <tr><td><span class="pill blue">Accuracy</span></td><td>What error rate can this workflow tolerate, and what does one wrongly accepted output cost?</td></tr>
+  <tr><td><span class="pill blue">Accuracy</span></td><td>Which is worse for you: a false accept or a false reject?</td></tr>
+  <tr><td><span class="pill orange">Latency</span></td><td>How long can the verifier take: milliseconds, seconds, minutes, or overnight?</td></tr>
+  <tr><td><span class="pill purple">Trade-off</span></td><td>If one had to give, which goes first: cost, accuracy, or latency?</td></tr>
+  <tr><td><span class="pill purple">Trade-off</span></td><td>What extra cost or delay would you accept to halve false accepts?</td></tr>
+</table>
 
-<section id="interviews">
-  <h2><span class="num">05</span>Collaborator Interviews</h2>
-  <p><strong>One structured interview per collaborator.</strong></p>
+<!-- 6 -->
+<h2 id="ships">6. What Ships with the OpenVerify Community</h2>
+<ol>
+  <li><strong>Open verifiers</strong>: LLM-as-a-Verifier, pre-trained CLMs, a fine-tuning recipe with contrastive learning, and expert rubrics for each domain.</li>
+  <li><strong>VerifyBench</strong>: per-domain sets of (task, candidate, ground-truth outcome).</li>
+  <li><strong>A unified reporting standard</strong>: the <em>verifier card</em>, so results are comparable across domains.</li>
+  <li><strong>Case studies</strong>: every collaboration reported under one schema.</li>
+  <li><strong>A workshop at ICML / NeurIPS?</strong> Venue and timing TBD.</li>
+</ol>
+<div class="callout"><div class="ci">❓</div><div><p><strong>Question for discussion:</strong> Is there anything else we can do to build a stronger community?</p></div></div>
 
-  <h3>Part A — Adoption experience</h3>
-  <ol>
-    <li>What did you use to check agent outputs before?</li>
-    <li>What changed after adopting the verifier, and how do you know?</li>
-    <li>What broke?</li>
-    <li>What would make you stop using it?</li>
-    <li>What did it cost to set up?</li>
-  </ol>
+<!-- 7 -->
+<h2 id="compute">7. Verification Compute and Chip Design</h2>
+<figure><img src="assets/fig18.png" alt="Read (prefill) vs written tokens for agent decoding, LLM-as-a-Verifier, and CLM" loading="lazy"></figure>
+<ul>
+  <li><strong>Open question:</strong> Is inference compute shifting toward prefill as verifiers multiply the number of reads?</li>
+  <li>SemiAnalysis has reached out and is interested in writing a blog post on verifier compute.</li>
+</ul>
 
-  <h3>Part B — Cost / accuracy / latency trade-offs</h3>
-  <figure class="narrow"><img src="assets/fig17.png" alt="Accuracy, cost, latency triangle: where do you sit?" loading="lazy"></figure>
-  <table>
-    <tr><th>Dimension</th><th>Question</th></tr>
-    <tr><td>Cost</td><td>What do you spend on verification per task today, and what is the most you would pay?</td></tr>
-    <tr><td>Accuracy</td><td>What error rate can this workflow tolerate, and what does one wrongly accepted output cost?</td></tr>
-    <tr><td>Accuracy</td><td>Which is worse for you: a false accept or a false reject?</td></tr>
-    <tr><td>Latency</td><td>How long can the verifier take: milliseconds, seconds, minutes, or overnight?</td></tr>
-    <tr><td>Trade-off</td><td>If one had to give, which goes first: cost, accuracy, or latency?</td></tr>
-    <tr><td>Trade-off</td><td>What extra cost or delay would you accept to halve false accepts?</td></tr>
-  </table>
-</section>
-
-<section id="ships">
-  <h2><span class="num">06</span>What Ships with OpenVerify</h2>
-  <div class="ships">
-    <div><b>1 · Open verifiers</b>LLM-as-a-Verifier, pre-trained CLMs, a fine-tuning recipe with contrastive learning, and expert rubrics for each domain.</div>
-    <div><b>2 · VerifyBench</b>Per-domain sets of (task, candidate, ground-truth outcome).</div>
-    <div><b>3 · Reporting standard</b>The <em>verifier card</em>, so results are comparable across domains.</div>
-    <div><b>4 · Case studies</b>Every collaboration reported under one schema.</div>
-    <div><b>5 · Workshop</b>At ICML / NeurIPS? Venue and timing TBD.</div>
-  </div>
-  <div class="callout q"><strong>Open question:</strong> Is there anything else we can do to build a stronger community?</div>
-</section>
-
-<section id="compute">
-  <h2><span class="num">07</span>Verification Compute &amp; Chip Design</h2>
-  <figure><img src="assets/fig18.png" alt="Read (prefill) vs written tokens for agent decoding, LLM-as-a-Verifier, and CLM" loading="lazy"><figcaption>Agents read a short context and write long trajectories; verifiers read full trajectories and write little or nothing.</figcaption></figure>
-  <ul>
-    <li><strong>Open question:</strong> Is inference compute shifting toward prefill as verifiers multiply the number of reads?</li>
-    <li>SemiAnalysis has reached out and is interested in writing a blog post on verifier compute.</li>
-  </ul>
-</section>
-
-<section id="next">
-  <h2><span class="num">08</span>Next Steps (This Month)</h2>
-  <ul class="todo">
-    <li>Settle the thesis and the reporting standard</li>
-    <li>Send the schema to partner companies</li>
-    <li>Draft the survey</li>
-  </ul>
-</section>
+<!-- 8 -->
+<h2 id="next">8. Next Steps (This Month)</h2>
+<ul class="todo">
+  <li>Settle the thesis and the reporting standard</li>
+  <li>Send the schema to partner companies</li>
+  <li>Draft the survey</li>
+</ul>
 
 </main>
-
-<footer><div class="wrap">OpenVerify · November 2026</div></footer>
 </body>
 </html>
