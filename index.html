@@ -116,7 +116,7 @@
 <div class="cols">
   <div class="callout"><div class="ci">👤</div><div><p><strong>74%</strong> of production agent deployments still rely on human evaluation</p></div></div>
   <div class="callout"><div class="ci">📈</div><div><p><strong>69% → 92%</strong> verifier accuracy from newer models in 12 months</p></div></div>
-  <div class="callout"><div class="ci">🤝</div><div><p><strong>7</strong> industry &amp; academic adopters across 7 domains</p></div></div>
+  <div class="callout"><div class="ci">🤝</div><div><p><strong>7</strong> industry &amp; academic adopters, spanning all <strong>5 tiers</strong> of the verifiability spectrum</p></div></div>
 </div>
 
 <nav class="toc">
@@ -148,17 +148,19 @@
   <li>The news sparked a broader discussion on X about <strong>verifiable vs. non-verifiable tasks</strong> and <strong>jagged intelligence</strong>:
     <ul><li>LLMs are extremely capable on verifiable tasks such as math and coding, but fail badly in many non-verifiable domains.</li></ul>
   </li>
+  <li><strong>Our framing:</strong> verifiable vs. non-verifiable is not a binary. Verifiability is a spectrum (<a href="#position">Section 2</a>), and the jagged edge of capability tracks where reliable verification runs out.</li>
 </ul>
 <figure><img src="assets/fig1.png" alt="Jagged intelligence illustration" loading="lazy"><figcaption>Jagged intelligence.</figcaption></figure>
 
-<p>Examples of outputs that are hard to verify:</p>
-<ul>
-  <li>A medication order</li>
-  <li>A contract</li>
-  <li>A lane change by an autonomous car</li>
-  <li>A grasp by a robot</li>
-</ul>
-<div class="callout yellow"><div class="ci">⚠️</div><div><p><strong>We currently have no verifier that returns a trusted score for outputs like these.</strong></p></div></div>
+<p>Examples of outputs that are hard to verify, and where they sit on the spectrum:</p>
+<table>
+  <tr><th>Output</th><th>Tier</th><th>Why it is hard to verify</th></tr>
+  <tr><td>A lane change by an autonomous car</td><td><span class="pill green">Tier 3 · Delayed / Expensive</span></td><td rowspan="2">Ground truth is a physical outcome: slow, costly, and sometimes unsafe to obtain</td></tr>
+  <tr><td>A grasp by a robot</td><td><span class="pill green">Tier 3 · Delayed / Expensive</span></td></tr>
+  <tr><td>A medication order</td><td><span class="pill orange">Tier 4 · Expert Judgment</span></td><td rowspan="2">Ground truth is a professional applying a rubric: scarce and expensive</td></tr>
+  <tr><td>A contract</td><td><span class="pill orange">Tier 4 · Expert Judgment</span></td></tr>
+</table>
+<div class="callout yellow"><div class="ci">⚠️</div><div><p><strong>We currently have no verifier that returns a trusted score for outputs like these.</strong> Expanding the frontier of verifiability means building one, and measuring how far it can be trusted.</p></div></div>
 
 <!-- 2 -->
 <h2 id="position">2. Thesis: Expanding the Frontier of Verifiability</h2>
@@ -175,9 +177,14 @@
   <li><strong>OpenVerify Community:</strong> Establish shared benchmarks, reporting standards, open verifier models, and cross-industry case studies to systematically measure and advance the frontier of verifiability.</li>
 </ol>
 <figure><img src="assets/spectrum.png" alt="The verifiability spectrum in five tiers: Programmatic (tests, simulators, proof checkers), Reference (labeled reference answers), Delayed / Expensive (physical outcomes), Expert Judgment (rubrics applied by professionals), and Preference (human preference; no agreed answer), running from 'verifier comes for free' to 'verifier must be learned'" loading="lazy"><figcaption>The verifiability spectrum: five tiers, from verifiers that come for free to verifiers that must be learned.</figcaption></figure>
+<ul>
+  <li><strong>Reading the spectrum:</strong> moving right, ground truth becomes scarcer, slower, and less agreed upon, so the verifier shifts from something we get for free to something that has to be learned.</li>
+  <li><strong>The frontier:</strong> the set of tasks for which a lightweight verifier matches the tier’s trusted reference closely enough, at a cost and latency the deployment can afford. The rest of the agenda is about measuring that frontier and pushing it outward.</li>
+</ul>
 
 <!-- 3 -->
 <h2 id="evidence">3. Evidence for the Thesis</h2>
+<p>What we already have for each part of the agenda, and what is still open.</p>
 
 <h3>Verification is the constraint</h3>
 <ul>
@@ -185,6 +192,34 @@
     <ul><li>Source: Melissa &amp; Marquita, <em>Measuring Agents in Production</em> (2025).</li></ul>
   </li>
   <li><strong>Plan:</strong> re-run the survey with Marquita and Melissa, report the updated number, and see whether it has held steady or shrunk.</li>
+</ul>
+
+<h3>Verifiability Spectrum: current adoptions span all five tiers</h3>
+<p>Proposed placement of each case study (details in <a href="#cases">Section 4</a>):</p>
+<table>
+  <tr><th style="width:180px">Tier</th><th style="width:150px">Trusted reference</th><th>Case studies and results with the verifier</th></tr>
+  <tr><td><span class="pill green">1 · Programmatic</span></td><td>Tests, simulators, proof checkers</td><td><strong>NVIDIA</strong>: Terminal-Bench 2.1 63% → 72%; DeepSWE 25% → 35%</td></tr>
+  <tr><td><span class="pill green">2 · Reference</span></td><td>Labeled reference answers</td><td><strong>Databricks</strong>: OfficeQA V2 pass@1 36% → 49%<br><strong>Google Research</strong>: GeoExpertQueries 63% → 76%<br><strong>NVIDIA</strong>: BrowseComp 71.5% → 79.8%</td></tr>
+  <tr><td><span class="pill green">3 · Delayed / Expensive</span></td><td>Physical outcomes</td><td><strong>Lambda &amp; NVIDIA</strong>: driving success 64.3% → 81.3%<br><strong>RoboVerify</strong>: 25.0% → 50.5%<br><strong>Genentech</strong>: drug discovery, validation on internal data pending</td></tr>
+  <tr><td><span class="pill orange">4 · Expert Judgment</span></td><td>Rubrics applied by professionals</td><td><strong>Stanford Law (RegLab)</strong>: +15% pass rate on the Harvey Lab legal benchmark</td></tr>
+  <tr><td><span class="pill orange">5 · Preference</span></td><td>Human preference; no agreed answer</td><td><strong>Thinking Machines</strong>: 3D modeling quality +32%; +8% held-out score as an RL reward</td></tr>
+</table>
+<ul>
+  <li>Gains show up at every tier, including Tiers 3–5 where no verifier comes for free.</li>
+  <li><strong>Open:</strong> confirm each placement with the partner. Some tasks straddle tiers: driving is scored in closed-loop simulation today, but the reference we ultimately care about is the physical outcome.</li>
+</ul>
+
+<h3>Verification Fidelity: metrics we already report</h3>
+<table>
+  <tr><th style="width:150px">Metric</th><th>What it measures</th><th>Where we have it</th></tr>
+  <tr><td>Pairwise verification accuracy</td><td>Agreement with ground truth when choosing between two candidates</td><td>Terminal-Bench 2.1: 69.4% → 92.2% across model generations</td></tr>
+  <tr><td>Oracle headroom recovered</td><td>Share of the gap between pass@1 and oracle pass@N that verifier selection closes</td><td>OfficeQA V2: 35.9% → 48.9% against an oracle pass@3 of 54.4%, i.e. 70%</td></tr>
+  <tr><td>Tie rate</td><td>How often a judge cannot separate two candidates</td><td>Thinking Machines: rises during RL training when scores are discrete</td></tr>
+  <tr><td>Downstream gain</td><td>Task success with vs. without the verifier</td><td>Most case studies in Section 4</td></tr>
+</table>
+<ul>
+  <li>The trusted reference differs by tier: objective outcomes (Tiers 1–3), expert judgments (Tier 4), and human preferences (Tier 5).</li>
+  <li><strong>Open:</strong> pick one headline fidelity metric per tier for the verifier card, so results compare across domains. Downstream gain also depends on the generator, so on its own it does not isolate verifier quality.</li>
 </ul>
 
 <h3>Scaling Verification: three axes, each with a cost–fidelity–latency trade-off</h3>
@@ -226,10 +261,20 @@
   <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↑ Up</td></tr></table></div>
 </details>
 
+<h3>Cost–Fidelity–Latency Trade-offs: what we know so far</h3>
+<ul>
+  <li><strong>The three levers move different corners.</strong> Test-time compute and a stronger verifier model buy fidelity with more cost and latency. A trained verifier (CLM) cuts cost and latency, with fidelity up in-domain but down on generalization.</li>
+  <li><strong>A small model plus verification can stand in for a much larger one.</strong> Alpamayo Edge (2B) with self-verification outperforms Alpamayo Super (34B). DeepSeek-V4.1-Flash with self-verification reaches 50.5%, against 55.3% for GPT-6 Astra, at 10.3× lower cost.</li>
+  <li><strong>Each partner sits at a different operating point.</strong> Interview Part B (<a href="#interviews">Section 5</a>) collects their cost ceiling, tolerable error rate, and latency budget.</li>
+  <li><strong>Open:</strong> when can an approximate verifier replace an expensive evaluation (closed-loop simulation, wet-lab validation, expert review), and when should it only complement it?</li>
+</ul>
+
 <!-- 4 -->
 <h2 id="cases">4. Industry Adoptions and Case Studies</h2>
+<p>Each case study is tagged with its proposed tier on the verifiability spectrum.</p>
 
 <h3>NVIDIA — Nemotron 3.5 model release</h3>
+<p><span class="pill green">Tier 1 · Programmatic</span><span class="pill green">Tier 2 · Reference</span></p>
 <figure><img src="assets/fig4.png" alt="Nemotron 3.5 release" loading="lazy"></figure>
 <p>Scaling <strong>self-verification</strong> with <strong>Nemotron 3.5 Super</strong> improves accuracy across agentic benchmarks:</p>
 <table>
@@ -240,6 +285,7 @@
 </table>
 
 <h3>Thinking Machines — RL for non-verifiable tasks</h3>
+<p><span class="pill orange">Tier 5 · Preference</span></p>
 <ul>
   <li><a href="https://jackyk02.github.io/thinking_blog/#3d-gallery">Blog post</a></li>
   <li>Standard LLM judges tend to assign identical scores on aesthetic quality, so they provide little signal.</li>
@@ -252,11 +298,13 @@
 <figure><img src="assets/fig7.png" alt="Held-out score comparison" loading="lazy"></figure>
 
 <h3>Databricks — Document processing</h3>
+<p><span class="pill green">Tier 2 · Reference</span></p>
 <ul><li>On <strong>OfficeQA V2</strong>, LLM-as-a-Verifier improves pass@1 from <strong>36% → 49%</strong>, recovering <strong>70% of the oracle headroom</strong>.</li></ul>
 <figure><img src="assets/fig8.png" alt="OfficeQA results" loading="lazy"></figure>
 <figure><img src="assets/fig9.png" alt="OfficeQA oracle headroom" loading="lazy"></figure>
 
 <h3>Stanford Law School — Legal agents</h3>
+<p><span class="pill orange">Tier 4 · Expert Judgment</span></p>
 <ul>
   <li>Built a verifier-native harness with the <a href="https://reglab.stanford.edu/">Regulation, Evaluation, and Governance Lab (RegLab)</a> at Stanford Law School.</li>
   <li>On the <strong>Harvey Lab legal benchmark</strong>: <strong>+15% pass rate</strong> over the Artificial Analysis harness, across models.</li>
@@ -264,6 +312,7 @@
 <figure><img src="assets/fig10.png" alt="Legal benchmark results" loading="lazy"></figure>
 
 <h3>Lambda &amp; NVIDIA — Autonomous driving</h3>
+<p><span class="pill green">Tier 3 · Delayed / Expensive</span></p>
 <ul>
   <li>With scaled self-verification, NVIDIA’s <strong>Alpamayo Edge (2B)</strong> outperforms the <strong>Alpamayo Super (34B)</strong> AV model.</li>
   <li>Closed-loop simulation on a Mercedes-Benz:
@@ -283,12 +332,14 @@
 </details>
 
 <h3>Google Research — Spatial reasoning</h3>
+<p><span class="pill green">Tier 2 · Reference</span></p>
 <ul><li>Task: answer questions grounded in Google Maps, spatial, and geographic data.</li></ul>
 <figure><img src="assets/fig12.png" alt="Spatial reasoning task example" loading="lazy"></figure>
 <ul><li>On <strong>GeoExpertQueries</strong> (built on Google Maps), LLM-as-a-Verifier raises the success rate of <strong>Gemini 3.8 Flash from 63% → 76%</strong> (+13).</li></ul>
 <figure><img src="assets/fig13.png" alt="GeoExpertQueries results" loading="lazy"></figure>
 
 <h3>RoboVerify — New paper with Azalia, Marco &amp; Yejin</h3>
+<p><span class="pill green">Tier 3 · Delayed / Expensive</span></p>
 <ul>
   <li>Similar in spirit to our earlier RoboMonkey work, but now verifying action proposals from LLMs directly.</li>
   <li>Scaling self-verification with <strong>DeepSeek-V4.1-Flash</strong> improves success from <strong>25.0% → 50.5%</strong>, close to <strong>GPT-6 Astra (55.3%)</strong> at <strong>10.3× lower cost</strong>.</li>
@@ -296,6 +347,7 @@
 <figure><img src="assets/fig14.png" alt="RoboVerify results" loading="lazy"></figure>
 
 <h3>Genentech — Drug discovery</h3>
+<p><span class="pill green">Tier 3 · Delayed / Expensive</span></p>
 <ul>
   <li>Genentech’s agentic drug discovery AI team reached out to us.</li>
   <li>Validation in this domain is very expensive: animal studies, human experiments, and the FDA process.</li>
@@ -308,7 +360,7 @@
 
 <!-- 5 -->
 <h2 id="interviews">5. Collaborator Interviews</h2>
-<p><strong>One structured interview per collaborator.</strong></p>
+<p><strong>One structured interview per collaborator.</strong> Each interview becomes a case study under the shared schema (<a href="#ships">Section 6</a>), and the three parts map onto the agenda: adoption experience, cost–fidelity–latency trade-offs, and placement on the spectrum.</p>
 
 <h3>Part A — Adoption experience</h3>
 <ol>
@@ -331,21 +383,50 @@
   <tr><td><span class="pill purple">Trade-off</span></td><td>What extra cost or delay would you accept to halve false accepts?</td></tr>
 </table>
 
+<h3>Part C — Ground truth and the spectrum (draft)</h3>
+<table>
+  <tr><th style="width:120px">Dimension</th><th>Question</th></tr>
+  <tr><td><span class="pill gray">Availability</span></td><td>What do you treat as ground truth for this task, and who or what produces it?</td></tr>
+  <tr><td><span class="pill green">Cost</span></td><td>What does it cost, and how long does it take, to get ground truth for one output?</td></tr>
+  <tr><td><span class="pill blue">Reliability</span></td><td>How often do two trusted evaluators disagree on the same output?</td></tr>
+  <tr><td><span class="pill yellow">Tier</span></td><td>Which tier of the spectrum best describes the task today, and does that match where we placed it?</td></tr>
+</table>
+
 <!-- 6 -->
 <h2 id="ships">6. What Ships with the OpenVerify Community</h2>
 <ol>
   <li><strong>Open verifiers</strong>: LLM-as-a-Verifier, pre-trained CLMs, a fine-tuning recipe with contrastive learning, and expert rubrics for each domain.</li>
-  <li><strong>VerifyBench</strong>: per-domain sets of (task, candidate, ground-truth outcome).</li>
+  <li><strong>VerifyBench</strong>: per-domain sets of (task, candidate, ground-truth outcome), covering all five tiers, with each tier’s trusted reference as the ground truth.</li>
   <li><strong>A unified reporting standard</strong>: the <em>verifier card</em>, so results are comparable across domains.</li>
   <li><strong>Case studies</strong>: every collaboration reported under one schema.</li>
   <li><strong>A workshop at ICML / NeurIPS?</strong> Venue and timing TBD.</li>
 </ol>
+<details open>
+  <summary>Verifier card: draft fields</summary>
+  <div class="body"><table>
+    <tr><th style="width:150px">Field</th><th>What it records</th></tr>
+    <tr><td>Task and tier</td><td>The domain, the output being verified, and its tier on the spectrum</td></tr>
+    <tr><td>Trusted reference</td><td>What counts as ground truth, who or what produces it, and what it costs to obtain</td></tr>
+    <tr><td>Verifier</td><td>Model, method (LLM-as-a-Verifier, CLM, fine-tuned), and compute setting: score granularity, repeated evaluations, criteria</td></tr>
+    <tr><td>Fidelity</td><td>The headline metric against the trusted reference, with false-accept and false-reject rates</td></tr>
+    <tr><td>Cost</td><td>Cost per verification</td></tr>
+    <tr><td>Latency</td><td>Time per verification</td></tr>
+    <tr><td>Downstream effect</td><td>Task success with vs. without the verifier</td></tr>
+  </table></div>
+</details>
 <div class="callout"><div class="ci">❓</div><div><p><strong>Question for discussion:</strong> Is there anything else we can do to build a stronger community?</p></div></div>
 
 <!-- 7 -->
 <h2 id="compute">7. Verification Compute and Chip Design</h2>
 <figure><img src="assets/fig18.png" alt="Read (prefill) vs written tokens for agent decoding, LLM-as-a-Verifier, and CLM" loading="lazy"></figure>
 <ul>
+  <li>This is the hardware side of the cost and latency axes. The three workloads have very different token profiles:
+    <ul>
+      <li><strong>Agent decoding</strong> reads a short context and writes a long trajectory.</li>
+      <li><strong>LLM-as-a-Verifier</strong> reads two full trajectories and writes a short verdict.</li>
+      <li><strong>CLM</strong> takes one forward pass to a score and writes nothing.</li>
+    </ul>
+  </li>
   <li><strong>Open question:</strong> Is inference compute shifting toward prefill as verifiers multiply the number of reads?</li>
   <li>SemiAnalysis has reached out and is interested in writing a blog post on verifier compute.</li>
 </ul>
@@ -353,7 +434,8 @@
 <!-- 8 -->
 <h2 id="next">8. Next Steps (This Month)</h2>
 <ul class="todo">
-  <li>Settle the thesis and the reporting standard</li>
+  <li>Settle the thesis (draft in Section 2) and the reporting standard (draft verifier card in Section 6)</li>
+  <li>Confirm each case study’s tier and pick a headline fidelity metric per tier</li>
   <li>Send the schema to partner companies</li>
   <li>Draft the survey</li>
 </ul>
