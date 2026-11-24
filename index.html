@@ -110,7 +110,7 @@
 <hr>
 
 <div class="callout blue"><div class="ci">💡</div><div>
-  <p><strong>TL;DR</strong>: LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose launching <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper.</p>
+  <p><strong>TL;DR</strong>: LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose launching <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper on <strong>expanding the frontier of verifiability</strong>.</p>
 </div></div>
 
 <div class="cols">
@@ -121,8 +121,8 @@
 
 <nav class="toc">
   <a href="#motivation">1. Motivation</a>
-  <a href="#position">2. Position Paper Outline</a>
-  <a href="#evidence">3. Evidence for Each Position</a>
+  <a href="#position">2. Thesis: Expanding the Frontier of Verifiability</a>
+  <a href="#evidence">3. Evidence for the Thesis</a>
   <a href="#cases">4. Industry Adoptions and Case Studies</a>
   <a href="#interviews">5. Collaborator Interviews</a>
   <a href="#ships">6. What Ships with OpenVerify</a>
@@ -162,20 +162,25 @@
 <div class="callout yellow"><div class="ci">⚠️</div><div><p><strong>We currently have no verifier that returns a trusted score for outputs like these.</strong></p></div></div>
 
 <!-- 2 -->
-<h2 id="position">2. Position Paper Outline</h2>
+<h2 id="position">2. Thesis: Expanding the Frontier of Verifiability</h2>
 <p>We plan to write a position paper for OpenVerify, modeled after the <em>Barbarians at the Gate</em> paper.</p>
-<p><strong>The position:</strong></p>
+<div class="callout green"><div class="ci">🎯</div><div>
+  <p><strong>Thesis:</strong> AI progress is increasingly constrained by our ability to reliably verify model outputs and agent behaviors. We argue that verification should be treated as a <strong>first-class component of AI systems</strong>, with the goal of <strong>expanding the set of tasks that can be verified reliably and efficiently</strong>.</p>
+</div></div>
+<p><strong>The agenda:</strong></p>
 <ol>
-  <li><strong>Verification, not generation, is now the binding constraint on deploying AI agents.</strong></li>
-  <li><strong>Verification is a capability that scales with compute, data, and model capability.</strong></li>
-  <li><strong>Verification should be built and measured as a first-class component, separate from the agent.</strong></li>
-  <li><strong>Case studies</strong> showing how verification scaling applies across domains.</li>
+  <li><strong>Verifiability Spectrum:</strong> Characterize tasks by the availability, cost, and reliability of ground truth, ranging from formally verifiable tasks (math and coding) to expensive or delayed verification (robotics, autonomous driving, and drug discovery) and subjective evaluation (painting and music).</li>
+  <li><strong>Verification Fidelity:</strong> Establish domain-appropriate metrics for measuring how closely lightweight verifiers approximate trusted reference evaluations, including objective outcomes, expert judgments, and human preferences.</li>
+  <li><strong>Cost–Fidelity–Latency Trade-offs:</strong> Study how verification quality changes with computational cost, evaluation latency, and access to ground truth, identifying when approximate verification can replace or complement expensive evaluations.</li>
+  <li><strong>Scaling Verification:</strong> Investigate how test-time compute, training data, and verifier model capability improve verification fidelity and efficiency, enabling reliable evaluation of increasingly complex tasks.</li>
+  <li><strong>OpenVerify Community:</strong> Establish shared benchmarks, reporting standards, open verifier models, and cross-industry case studies to systematically measure and advance the frontier of verifiability.</li>
 </ol>
+<figure><img src="assets/spectrum.png" alt="The verifiability spectrum in five tiers: Programmatic (tests, simulators, proof checkers), Reference (labeled reference answers), Delayed / Expensive (physical outcomes), Expert Judgment (rubrics applied by professionals), and Preference (human preference; no agreed answer), running from 'verifier comes for free' to 'verifier must be learned'" loading="lazy"><figcaption>The verifiability spectrum: five tiers, from verifiers that come for free to verifiers that must be learned.</figcaption></figure>
 
 <!-- 3 -->
-<h2 id="evidence">3. Evidence for Each Position</h2>
+<h2 id="evidence">3. Evidence for the Thesis</h2>
 
-<h3>Position 1: Verification is the binding constraint</h3>
+<h3>Verification is the constraint</h3>
 <ul>
   <li>Today, <strong>74% of production deployments rely on human evaluation.</strong>
     <ul><li>Source: Melissa &amp; Marquita, <em>Measuring Agents in Production</em> (2025).</li></ul>
@@ -183,9 +188,9 @@
   <li><strong>Plan:</strong> re-run the survey with Marquita and Melissa, report the updated number, and see whether it has held steady or shrunk.</li>
 </ul>
 
-<h3>Position 2: Verification scales along three axes</h3>
+<h3>Scaling Verification: three axes, each with a cost–fidelity–latency trade-off</h3>
 
-<h4>(a) Compute</h4>
+<h4>(a) Test-time compute</h4>
 <p>In our LLM-as-a-Verifier paper, verification accuracy improves consistently as we scale:</p>
 <ol>
   <li>The granularity of score tokens</li>
@@ -193,33 +198,33 @@
   <li>The decomposition of evaluation criteria</li>
 </ol>
 <details>
-  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
-  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table></div>
+  <summary>Trade-offs: Cost · Fidelity · Latency</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Fidelity</th><th>Latency</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↑ Up</td></tr></table></div>
 </details>
 <figure><img src="assets/fig2.png" alt="Verification accuracy scaling with compute" loading="lazy"></figure>
 
-<h4>(b) Data for training / fine-tuning verifiers</h4>
+<h4>(b) Training data (training / fine-tuning verifiers)</h4>
 <ul>
   <li>With contrastive language models (CLMs), we find that the test InfoNCE loss (verification loss) <em>L</em> follows a <strong>power law</strong> in training compute <em>C</em>, dataset size <em>D</em>, and model parameters <em>N</em>.</li>
 </ul>
 <figure><img src="assets/clm-scaling.png" alt="CLM scaling laws" loading="lazy"></figure>
 <details>
-  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
-  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-green">↓ Down</td><td><span class="c-green">↑ Up</span> on domain-specific data; <span class="c-red">↓ Down</span> on generalization</td><td class="c-green">↑ Up</td></tr></table></div>
+  <summary>Trade-offs: Cost · Fidelity · Latency</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Fidelity</th><th>Latency</th></tr>
+  <tr><td class="c-green">↓ Down</td><td><span class="c-green">↑ Up</span> on domain-specific data; <span class="c-red">↓ Down</span> on generalization</td><td class="c-green">↓ Down</td></tr></table></div>
 </details>
 
-<h4>(c) Model capability</h4>
+<h4>(c) Verifier model capability</h4>
 <ul>
   <li><strong>Newer models are better verifiers out of the box.</strong></li>
   <li>In twelve months, verification accuracy rose from <strong>69% (Haiku) to 92% (Fable 5.2)</strong>.</li>
 </ul>
 <figure><img src="assets/fig3.png" alt="Verification accuracy by model generation" loading="lazy"></figure>
 <details>
-  <summary>Trade-offs: Cost · Accuracy · Speed</summary>
-  <div class="body"><table><tr><th>Cost</th><th>Accuracy</th><th>Speed</th></tr>
-  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↓ Down</td></tr></table></div>
+  <summary>Trade-offs: Cost · Fidelity · Latency</summary>
+  <div class="body"><table><tr><th>Cost</th><th>Fidelity</th><th>Latency</th></tr>
+  <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↑ Up</td></tr></table></div>
 </details>
 
 <!-- 4 -->
