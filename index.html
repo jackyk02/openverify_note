@@ -103,6 +103,7 @@
 
 <div class="props">
   <div class="row"><div class="k">📅 Date</div><div class="v">November 21, 2026</div></div>
+  <div class="row"><div class="k">🔄 Updated</div><div class="v">November 26, 2026</div></div>
   <div class="row"><div class="k">🏷️ Type</div><div class="v"><span class="pill blue">Advisor meeting</span><span class="pill purple">Proposal</span></div></div>
   <div class="row"><div class="k">🔵 Status</div><div class="v"><span class="pill yellow">In progress</span></div></div>
   <div class="row"><div class="k">🏢 Partners</div><div class="v"><span class="pill green">NVIDIA</span><span class="pill gray">Thinking Machines</span><span class="pill orange">Databricks</span><span class="pill blue">Google</span><span class="pill purple">Lambda</span><span class="pill red">Genentech</span><span class="pill pink">Stanford Law</span></div></div>
@@ -110,7 +111,10 @@
 <hr>
 
 <div class="callout blue"><div class="ci">💡</div><div>
-  <p><strong>TL;DR</strong>: LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose launching <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper on <strong>expanding the frontier of verifiability</strong>.</p>
+  <p><strong>TL;DR</strong>: LLM-as-a-Verifier is already being adopted across industry. Building on that momentum, we propose launching <strong>OpenVerify</strong>, an open-source community around verification for agents, anchored by a position paper on <strong>expanding the frontier of verifiability</strong>. Its key contribution is a <strong>verifiability spectrum</strong> across application domains: a unifying framework that existing work on verification lacks.</p>
+</div></div>
+<div class="callout"><div class="ci">📝</div><div>
+  <p><strong>Update, November 26:</strong> incorporated expert feedback on the position paper. The central thesis stays. The paper now separates the <a href="#position">spectrum, the dimensions, and scaling</a>, brings in two more bodies of literature, and adds a <a href="#interviews">survey methodology and IRB check</a>.</p>
 </div></div>
 
 <div class="cols">
@@ -124,7 +128,7 @@
   <a href="#position">2. Thesis: Expanding the Frontier of Verifiability</a>
   <a href="#evidence">3. Evidence for the Thesis</a>
   <a href="#cases">4. Industry Adoptions and Case Studies</a>
-  <a href="#interviews">5. Collaborator Interviews</a>
+  <a href="#interviews">5. Survey and Collaborator Interviews</a>
   <a href="#ships">6. What Ships with OpenVerify</a>
   <a href="#compute">7. Verification Compute and Chip Design</a>
   <a href="#next">8. Next Steps</a>
@@ -168,23 +172,69 @@
 <div class="callout green"><div class="ci">🎯</div><div>
   <p><strong>Thesis:</strong> AI progress is increasingly constrained by our ability to reliably verify model outputs and agent behaviors. We argue that verification should be treated as a <strong>first-class component of AI systems</strong>, with the goal of <strong>expanding the set of tasks that can be verified reliably and efficiently</strong>.</p>
 </div></div>
-<p><strong>The agenda:</strong></p>
-<ol>
+<p>Following expert feedback, the central thesis stays, and the paper separates three concepts:</p>
+<div class="cols">
+  <div class="callout"><div class="ci">🧭</div><div><p><strong>1. Verifiability spectrum</strong><br>Where we are</p></div></div>
+  <div class="callout"><div class="ci">🚧</div><div><p><strong>2. Verification dimensions</strong><br>What constrains us</p></div></div>
+  <div class="callout"><div class="ci">🚀</div><div><p><strong>3. Verification scaling</strong><br>How we expand the frontier</p></div></div>
+</div>
+<ul>
+  <li>This separates the taxonomy of verification problems from the constraints, and from the technical approaches for solving them.</li>
+  <li>LLM-as-a-Verifier and CLM then serve as evidence that the frontier can be expanded, without centering the paper on our own methods.</li>
+  <li><strong>Echo-chamber caution:</strong> verification is already recognized within some research communities, but it is easy to overestimate how widely the idea has been adopted. The paper still has to make the case that verification is a first-class component of AI systems.</li>
+</ul>
+
+<h3>1. The verifiability spectrum: where we are</h3>
+<p><strong>The key contribution.</strong> Existing research addresses specific aspects of verification but lacks a unifying framework, and a holistic verifiability spectrum across application domains appears to be missing from the literature. The spectrum is a way to organize existing research and set a broader research agenda.</p>
+<ul>
   <li><strong>Verifiability Spectrum:</strong> Characterize tasks by the availability, cost, and reliability of ground truth, ranging from formally verifiable tasks (math and coding) to expensive or delayed verification (robotics, autonomous driving, and drug discovery) and subjective evaluation (painting and music).</li>
-  <li><strong>Verification Fidelity:</strong> Establish domain-appropriate metrics for measuring how closely lightweight verifiers approximate trusted reference evaluations, including objective outcomes, expert judgments, and human preferences.</li>
-  <li><strong>Cost–Fidelity–Latency Trade-offs:</strong> Study how verification quality changes with computational cost, evaluation latency, and access to ground truth, identifying when approximate verification can replace or complement expensive evaluations.</li>
-  <li><strong>Scaling Verification:</strong> Investigate how test-time compute, training data, and verifier model capability improve verification fidelity and efficiency, enabling reliable evaluation of increasingly complex tasks.</li>
-  <li><strong>OpenVerify Community:</strong> Establish shared benchmarks, reporting standards, open verifier models, and cross-industry case studies to systematically measure and advance the frontier of verifiability.</li>
-</ol>
+</ul>
 <figure><img src="assets/spectrum.png" alt="The verifiability spectrum in five tiers: Programmatic (tests, simulators, proof checkers), Reference (labeled reference answers), Delayed / Expensive (physical outcomes), Expert Judgment (rubrics applied by professionals), and Preference (human preference; no agreed answer), running from 'verifier comes for free' to 'verifier must be learned'" loading="lazy"><figcaption>The verifiability spectrum: five tiers, from verifiers that come for free to verifiers that must be learned.</figcaption></figure>
 <ul>
   <li><strong>Reading the spectrum:</strong> moving right, ground truth becomes scarcer, slower, and less agreed upon, so the verifier shifts from something we get for free to something that has to be learned.</li>
-  <li><strong>The frontier:</strong> the set of tasks for which a lightweight verifier matches the tier’s trusted reference closely enough, at a cost and latency the deployment can afford. The rest of the agenda is about measuring that frontier and pushing it outward.</li>
+  <li><strong>The frontier:</strong> the set of tasks for which a lightweight verifier matches the tier’s trusted reference closely enough, at a cost and latency the deployment can afford.</li>
+  <li><strong>Tasks can span tiers.</strong> Robotic manipulation involves objectively measurable physical outcomes and also subjective preferences over how the action is executed.</li>
+  <li><strong>Keep the paper simple.</strong> The five-tier view stays as the presentation. A fuller verifiability matrix (tasks × dimensions) is built up over time.</li>
+</ul>
+
+<h3>2. The verification dimensions: what constrains us</h3>
+<p>The spectrum orders tasks by ground-truth availability: whether reliable ground truth exists and how accessible it is. Verifiability is not one-dimensional, so each task is also described along these dimensions:</p>
+<table>
+  <tr><th style="width:150px">Dimension</th><th>Description</th><th style="width:200px">Where it stands in this note</th></tr>
+  <tr><td>Fidelity</td><td>How closely a verifier agrees with a reliable reference; accuracy and agreement between verifiers</td><td>Metrics already reported (<a href="#evidence">Section 3</a>)</td></tr>
+  <tr><td>Cost &amp; latency</td><td>Compute, time, financial cost, and human effort</td><td>The focus trade-off (<a href="#evidence">Section 3</a>)</td></tr>
+  <tr><td>Reversibility</td><td>Whether an incorrect action can be undone; includes transactional properties such as atomicity, isolation, and idempotency</td><td>Not yet measured; added to the survey</td></tr>
+  <tr><td>Failure consequences</td><td>The severity of failing to verify an action</td><td>Partly in interview Part B; added to the survey</td></tr>
+  <tr><td>Subjectivity</td><td>Whether correctness depends on human preferences</td><td>Tier 5 of the spectrum</td></tr>
+  <tr><td>Behavioral safety</td><td>Whether the behavior that produces an outcome is safe, not only the final outcome</td><td>Not yet measured; added to the survey</td></tr>
+</table>
+<ul>
+  <li><strong>Verification Fidelity:</strong> Establish domain-appropriate metrics for measuring how closely lightweight verifiers approximate trusted reference evaluations, including objective outcomes, expert judgments, and human preferences.</li>
+  <li><strong>Cost–Fidelity–Latency Trade-offs:</strong> Study how verification quality changes with computational cost, evaluation latency, and access to ground truth, identifying when approximate verification can replace or complement expensive evaluations.</li>
+</ul>
+
+<h3>3. Verification scaling: how we expand the frontier</h3>
+<figure><img src="assets/frontier.png" alt="Conceptual plot of reliability against task verification difficulty: a dashed curve marks the current frontier, and scaling verification pushes it outward to a larger expanded frontier" loading="lazy" style="max-width:620px"><figcaption>Conceptual framework, not empirical data.</figcaption></figure>
+<ul>
+  <li><strong>Scaling Verification:</strong> Investigate how test-time compute, training data, and verifier model capability improve verification fidelity and efficiency, enabling reliable evaluation of increasingly complex tasks.</li>
+  <li><strong>OpenVerify Community:</strong> Establish shared benchmarks, reporting standards, open verifier models, and cross-industry case studies to systematically measure and advance the frontier of verifiability.</li>
+</ul>
+
+<h3>Literature to incorporate</h3>
+<h4>Transactional semantics</h4>
+<ul>
+  <li>Research that applies traditional distributed-computing concepts to agentic systems: rollback and reversibility, idempotency, atomicity, isolation, and transactional correctness.</li>
+  <li>These refine the programmatic end of the spectrum: a task being programmatically verifiable does not mean its execution is safe or reversible.</li>
+</ul>
+<h4>Safety, trust, and reward hacking</h4>
+<ul>
+  <li>Research showing that even benign, well-specified agent tasks can lead to unsafe actions after small environmental changes, such as a missing file.</li>
+  <li>This draws the line between verifying the final outcome and verifying the behavior that produces it.</li>
 </ul>
 
 <!-- 3 -->
 <h2 id="evidence">3. Evidence for the Thesis</h2>
-<p>What we already have for each part of the agenda, and what is still open.</p>
+<p>What we already have for each of the three concepts, and what is still open.</p>
 
 <h3>Verification is the constraint</h3>
 <ul>
@@ -192,9 +242,20 @@
     <ul><li>Source: Melissa &amp; Marquita, <em>Measuring Agents in Production</em> (2025).</li></ul>
   </li>
   <li><strong>Plan:</strong> re-run the survey with Marquita and Melissa, report the updated number, and see whether it has held steady or shrunk.</li>
+  <li><strong>Hypothesis to test:</strong> if the share of evaluation that relies on humans has not moved while generation capabilities advanced rapidly, verification practice is not keeping pace with generation. This stays open until the longitudinal analysis is complete.</li>
 </ul>
+<p>Additional evidence to bring in:</p>
+<table>
+  <tr><th style="width:210px">Source</th><th>Relevance to the position paper</th></tr>
+  <tr><td>MAP study follow-up</td><td>Longitudinal evidence on how industry evaluates AI agents</td></tr>
+  <tr><td>Human evaluation statistics</td><td>Evidence of whether automated verification is progressing</td></tr>
+  <tr><td>IBM ITBench</td><td>Verification of enterprise and IT automation agents</td></tr>
+  <tr><td>Recursive system improvement</td><td>Verification of AI-driven optimization of software and infrastructure</td></tr>
+  <tr><td>Simulation-based benchmarks</td><td>Examples of expensive programmatic verification</td></tr>
+  <tr><td>KernelBench</td><td>Examples of correctness and performance verification</td></tr>
+</table>
 
-<h3>Verifiability Spectrum: current adoptions span all five tiers</h3>
+<h3>1. Spectrum: current adoptions span all five tiers</h3>
 <p>Proposed placement of each case study (details in <a href="#cases">Section 4</a>):</p>
 <table>
   <tr><th style="width:180px">Tier</th><th style="width:150px">Trusted reference</th><th>Case studies and results with the verifier</th></tr>
@@ -207,9 +268,10 @@
 <ul>
   <li>Gains show up at every tier, including Tiers 3–5 where no verifier comes for free.</li>
   <li><strong>Open:</strong> confirm each placement with the partner. Some tasks straddle tiers: driving is scored in closed-loop simulation today, but the reference we ultimately care about is the physical outcome.</li>
+  <li><strong>Let the evidence refine the taxonomy:</strong> the survey data should reshape the tiers where needed, instead of forcing every task into a predetermined category.</li>
 </ul>
 
-<h3>Verification Fidelity: metrics we already report</h3>
+<h3>2. Dimensions: fidelity metrics we already report</h3>
 <table>
   <tr><th style="width:150px">Metric</th><th>What it measures</th><th>Where we have it</th></tr>
   <tr><td>Pairwise verification accuracy</td><td>Agreement with ground truth when choosing between two candidates</td><td>Terminal-Bench 2.1: 69.4% → 92.2% across model generations</td></tr>
@@ -222,7 +284,38 @@
   <li><strong>Open:</strong> pick one headline fidelity metric per tier for the verifier card, so results compare across domains. Downstream gain also depends on the generator, so on its own it does not isolate verifier quality.</li>
 </ul>
 
-<h3>Scaling Verification: three axes, each with a cost–fidelity–latency trade-off</h3>
+<h3>2. Dimensions: focus on the cost–fidelity–latency trade-off</h3>
+
+<h4>Suggested conceptual framework</h4>
+<p>Map verification methods and domains according to:</p>
+<ul>
+  <li><strong>Fidelity:</strong> How closely does the verifier agree with a reliable reference?</li>
+  <li><strong>Cost:</strong> How expensive is verification?</li>
+  <li><strong>Latency:</strong> How long does it take to obtain the result?</li>
+</ul>
+<figure><img src="assets/cost-fidelity.png" alt="Conceptual curve of verification fidelity against verification cost: math and coding sit at high fidelity and low cost, robotics in the middle, and drug discovery at low fidelity and high cost" loading="lazy" style="max-width:520px"><figcaption>Illustrative only: a conceptual cost–fidelity relationship, not measured data or a universal ordering of domains.</figcaption></figure>
+<ul>
+  <li>Examples include database testing, system optimization, and drug discovery, where full verification may be expensive but a lightweight approximate verifier could provide useful feedback much sooner.</li>
+</ul>
+<div class="callout green"><div class="ci">🎯</div><div><p><strong>The important claim becomes:</strong> Can we achieve sufficiently high verification fidelity at a fraction of the cost and latency of conventional evaluation?</p></div></div>
+
+<h4>What we know so far</h4>
+<ul>
+  <li><strong>The three levers move different corners.</strong> Test-time compute and a stronger verifier model buy fidelity with more cost and latency. A trained verifier (CLM) cuts cost and latency, with fidelity up in-domain but down on generalization.</li>
+  <li><strong>A small model plus verification can stand in for a much larger one.</strong> Alpamayo Edge (2B) with self-verification outperforms Alpamayo Super (34B). DeepSeek-V4.1-Flash with self-verification reaches 50.5%, against 55.3% for GPT-6 Astra, at 10.3× lower cost.</li>
+  <li><strong>Each partner sits at a different operating point.</strong> Interview Part B (<a href="#interviews">Section 5</a>) collects their cost ceiling, tolerable error rate, and latency budget.</li>
+  <li><strong>Open:</strong> when can an approximate verifier replace an expensive evaluation (closed-loop simulation, wet-lab validation, expert review), and when should it only complement it?</li>
+</ul>
+
+<h3>2. Dimensions: not yet measured</h3>
+<ul>
+  <li><strong>Reversibility:</strong> no case study reports whether a wrong action could be undone.</li>
+  <li><strong>Failure consequences:</strong> interview Part B asks what one wrongly accepted output costs, but no case study reports severity yet.</li>
+  <li><strong>Behavioral safety:</strong> the case studies report outcome metrics such as success, pass, and collision rates. None separately checks the behavior that produced the outcome.</li>
+  <li>All three are being added to the survey (<a href="#interviews">Section 5</a>).</li>
+</ul>
+
+<h3>3. Scaling: three axes, each with a cost–fidelity–latency trade-off</h3>
 
 <h4>(a) Test-time compute</h4>
 <p>In our LLM-as-a-Verifier paper, verification accuracy improves consistently as we scale:</p>
@@ -260,29 +353,6 @@
   <div class="body"><table><tr><th>Cost</th><th>Fidelity</th><th>Latency</th></tr>
   <tr><td class="c-red">↑ Up</td><td class="c-green">↑ Up</td><td class="c-red">↑ Up</td></tr></table></div>
 </details>
-
-<h3>Focus: the Cost–Fidelity–Latency Trade-off</h3>
-
-<h4>Suggested conceptual framework</h4>
-<p>Map verification methods and domains according to:</p>
-<ul>
-  <li><strong>Fidelity:</strong> How closely does the verifier agree with a reliable reference?</li>
-  <li><strong>Cost:</strong> How expensive is verification?</li>
-  <li><strong>Latency:</strong> How long does it take to obtain the result?</li>
-</ul>
-<figure><img src="assets/cost-fidelity.png" alt="Conceptual curve of verification fidelity against verification cost: math and coding sit at high fidelity and low cost, robotics in the middle, and drug discovery at low fidelity and high cost" loading="lazy" style="max-width:520px"><figcaption>Illustrative only: a conceptual cost–fidelity relationship, not measured data or a universal ordering of domains.</figcaption></figure>
-<ul>
-  <li>Examples include database testing, system optimization, and drug discovery, where full verification may be expensive but a lightweight approximate verifier could provide useful feedback much sooner.</li>
-</ul>
-<div class="callout green"><div class="ci">🎯</div><div><p><strong>The important claim becomes:</strong> Can we achieve sufficiently high verification fidelity at a fraction of the cost and latency of conventional evaluation?</p></div></div>
-
-<h4>What we know so far</h4>
-<ul>
-  <li><strong>The three levers move different corners.</strong> Test-time compute and a stronger verifier model buy fidelity with more cost and latency. A trained verifier (CLM) cuts cost and latency, with fidelity up in-domain but down on generalization.</li>
-  <li><strong>A small model plus verification can stand in for a much larger one.</strong> Alpamayo Edge (2B) with self-verification outperforms Alpamayo Super (34B). DeepSeek-V4.1-Flash with self-verification reaches 50.5%, against 55.3% for GPT-6 Astra, at 10.3× lower cost.</li>
-  <li><strong>Each partner sits at a different operating point.</strong> Interview Part B (<a href="#interviews">Section 5</a>) collects their cost ceiling, tolerable error rate, and latency budget.</li>
-  <li><strong>Open:</strong> when can an approximate verifier replace an expensive evaluation (closed-loop simulation, wet-lab validation, expert review), and when should it only complement it?</li>
-</ul>
 
 <!-- 4 -->
 <h2 id="cases">4. Industry Adoptions and Case Studies</h2>
@@ -374,8 +444,26 @@
 <figure><img src="assets/fig16.png" alt="Drug discovery verification" loading="lazy"></figure>
 
 <!-- 5 -->
-<h2 id="interviews">5. Collaborator Interviews</h2>
-<p><strong>One structured interview per collaborator.</strong> Each interview becomes a case study under the shared schema (<a href="#ships">Section 6</a>), and the three parts map onto the agenda: adoption experience, cost–fidelity–latency trade-offs, and placement on the spectrum.</p>
+<h2 id="interviews">5. Survey and Collaborator Interviews</h2>
+<p>Two instruments: a broader practitioner survey, and <strong>one structured interview per collaborator.</strong> Each interview becomes a case study under the shared schema (<a href="#ships">Section 6</a>). The interview has three parts: adoption experience, cost–fidelity–latency trade-offs, and ground truth and dimensions.</p>
+
+<h3>Survey methodology</h3>
+<ol>
+  <li><strong>Clarify the research question first.</strong> Decide what evidence the survey needs to establish in support of the position.</li>
+  <li><strong>Collect what the literature cannot provide.</strong> Surveys are most valuable for unpublished industry practices, operational costs, and practitioner perspectives.</li>
+  <li><strong>Broaden the audience.</strong> Survey practitioners beyond existing LLM-as-a-Verifier adopters.</li>
+  <li><strong>Run pilot interviews before distributing.</strong> Learn why participants read questions differently, and surface nuances that structured responses miss.</li>
+  <li><strong>Use simple, accessible language.</strong> Ask collaborators whose first language is not English to review the questions.</li>
+  <li><strong>Iterate on the taxonomy from evidence.</strong> Let the collected data refine the spectrum instead of forcing every task into predetermined categories.</li>
+</ol>
+<ul><li>Community participation in the survey also builds broader buy-in for the position paper.</li></ul>
+
+<h3>IRB and data collection</h3>
+<ul>
+  <li>Keep the study about the verification of technological systems, not the characteristics of individual participants, particularly given the ICML timeline.</li>
+  <li>Avoid collecting unnecessary personally identifiable information, such as contact details and IP addresses, unless it is needed for follow-up studies.</li>
+</ul>
+<div class="callout yellow"><div class="ci">⚠️</div><div><p><strong>Anonymity alone does not necessarily exempt a study from human-subjects research requirements.</strong> Confirm the applicable requirements with Stanford’s IRB before distributing the survey.</p></div></div>
 
 <h3>Part A — Adoption experience</h3>
 <ol>
@@ -398,13 +486,16 @@
   <tr><td><span class="pill purple">Trade-off</span></td><td>What extra cost or delay would you accept to halve false accepts?</td></tr>
 </table>
 
-<h3>Part C — Ground truth and the spectrum (draft)</h3>
+<h3>Part C — Ground truth and dimensions (draft)</h3>
 <table>
   <tr><th style="width:120px">Dimension</th><th>Question</th></tr>
   <tr><td><span class="pill gray">Availability</span></td><td>What do you treat as ground truth for this task, and who or what produces it?</td></tr>
   <tr><td><span class="pill green">Cost</span></td><td>What does it cost, and how long does it take, to get ground truth for one output?</td></tr>
   <tr><td><span class="pill blue">Reliability</span></td><td>How often do two trusted evaluators disagree on the same output?</td></tr>
   <tr><td><span class="pill yellow">Tier</span></td><td>Which tier of the spectrum best describes the task today, and does that match where we placed it?</td></tr>
+  <tr><td><span class="pill red">Reversibility</span></td><td>If the agent takes a wrong action, can it be undone? How, and at what cost?</td></tr>
+  <tr><td><span class="pill orange">Consequences</span></td><td>What is the worst realistic result of accepting a wrong output?</td></tr>
+  <tr><td><span class="pill purple">Behavior</span></td><td>Do you check how the agent reached its result, or only the final result?</td></tr>
 </table>
 
 <!-- 6 -->
@@ -412,6 +503,7 @@
 <ol>
   <li><strong>Open verifiers</strong>: LLM-as-a-Verifier, pre-trained CLMs, a fine-tuning recipe with contrastive learning, and expert rubrics for each domain.</li>
   <li><strong>VerifyBench</strong>: per-domain sets of (task, candidate, ground-truth outcome), covering all five tiers, with each tier’s trusted reference as the ground truth.</li>
+  <li><strong>A verifiability matrix</strong>: tasks × dimensions, built up over time. The paper itself keeps the simple five-tier view.</li>
   <li><strong>A unified reporting standard</strong>: the <em>verifier card</em>, so results are comparable across domains.</li>
   <li><strong>Case studies</strong>: every collaboration reported under one schema.</li>
   <li><strong>A workshop at ICML / NeurIPS?</strong> Venue and timing TBD.</li>
@@ -427,6 +519,8 @@
     <tr><td>Cost</td><td>Cost per verification</td></tr>
     <tr><td>Latency</td><td>Time per verification</td></tr>
     <tr><td>Downstream effect</td><td>Task success with vs. without the verifier</td></tr>
+    <tr><td>Risk profile</td><td>Whether a wrong action can be undone, and the severity of a missed failure</td></tr>
+    <tr><td>What is verified</td><td>The final outcome, the behavior that produced it, or both</td></tr>
   </table></div>
 </details>
 <div class="callout"><div class="ci">❓</div><div><p><strong>Question for discussion:</strong> Is there anything else we can do to build a stronger community?</p></div></div>
@@ -452,7 +546,13 @@
   <li>Settle the thesis (draft in Section 2) and the reporting standard (draft verifier card in Section 6)</li>
   <li>Confirm each case study’s tier and pick a headline fidelity metric per tier</li>
   <li>Send the schema to partner companies</li>
-  <li>Draft the survey</li>
+  <li>Draft the survey: refine the questions to cover reversibility, failure consequences, and behavioral safety</li>
+  <li>Share the revised survey with the MAP study authors for feedback</li>
+  <li>Confirm Stanford IRB requirements before distributing the survey</li>
+  <li>Conduct a small number of pilot interviews</li>
+  <li>Collect the transactional-semantics and safety literature</li>
+  <li>Explore incorporating longitudinal findings from the MAP study</li>
+  <li>Follow up at next Tuesday’s lab meeting</li>
 </ul>
 
 </main>
